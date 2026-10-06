@@ -42,37 +42,4 @@ self.addEventListener('fetch', (e) => {
   }
 });
 
-// Tap on a notification -> open/focus the app on the task
-self.addEventListener('notificationclick', (e) => {
-  e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || '/tasks';
-  e.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
-      for (const client of list) {
-        if ('focus' in client) {
-          client.navigate(url).catch(() => {});
-          return client.focus();
-        }
-      }
-      return self.clients.openWindow(url);
-    })
-  );
-});
-
-// Web Push from the server (lib/push.js): task assigned, task updated
-self.addEventListener('push', (e) => {
-  let d = {};
-  try {
-    d = e.data ? e.data.json() : {};
-  } catch {
-    d = { body: e.data.text() };
-  }
-  e.waitUntil(
-    self.registration.showNotification(d.title || 'Kyolex Infosys', {
-      body: d.body || '',
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
-      data: { url: d.url || '/tasks' },
-    })
-  );
-});
+// Push alerts are handled by the OneSignal worker in public/push/onesignal.

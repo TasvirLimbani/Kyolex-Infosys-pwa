@@ -1,63 +1,79 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '@/lib/client';
+import { useUser } from './UserContext';
 import Icon from './Icon';
 
-const supported = () =>
-  typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
 
-function keyBytes(base64) {
-  const raw = atob((base64 + '='.repeat((4 - (base64.length % 4)) % 4)).replace(/-/g, '+').replace(/_/g, '/'));
-  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+// OneSignal's web SDK, loaded and started once per page load.
+let sdk;
+function oneSignal() {
+  if (!sdk) {
+    sdk = new Promise((resolve, reject) => {
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push((OneSignal) =>
+        OneSignal.init({
+          appId: APP_ID,
+          // own folder and scope, so it lives next to the app's /sw.js instead of replacing it
+          serviceWorkerPath: 'push/onesignal/OneSignalSDKWorker.js',
+          serviceWorkerParam: { scope: '/push/onesignal/' },
+          allowLocalhostAsSecureOrigin: true,
+        }).then(() => resolve(OneSignal), reject)
+      );
+      const s = document.createElement('script');
+      s.src = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
+      s.defer = true;
+      s.onerror = () => reject(new Error('OneSignal could not be loaded. Check the connection or an ad blocker.'));
+      document.head.appendChild(s);
+    });
+  }
+  return sdk;
 }
 
-// The push subscription of this device, if any. Used on sign out.
-export async function currentEndpoint() {
-  if (!supported()) return null;
-  const reg = await navigator.serviceWorker.getRegistration();
-  const sub = reg && (await reg.pushManager.getSubscription());
-  return sub ? sub.endpoint : null;
+// Sign out: this device stops receiving the signed-out user's alerts.
+export async function alertsSignOut() {
+  if (sdk) await sdk.then((os) => os.logout()).catch(() => {});
 }
 
-// Bell in the top bar: turns on phone alerts for this device and keeps its subscription registered.
+// Bell in the top bar: turns on phone alerts for this device and ties it to the signed-in employee.
 export default function NotificationBell() {
-  const [perm, setPerm] = useState('granted'); // granted | default | denied | unsupported
+  const user = useUser();
+  const [perm, setPerm] = useState('granted'); // granted | default | denied | unsupported | off
   const [note, setNote] = useState('');
 
-  const subscribe = useCallback(async (test = false) => {
-    const reg = await navigator.serviceWorker.ready;
-    const { publicKey } = await api('/api/push');
-    const key = keyBytes(publicKey);
-    let sub = await reg.pushManager.getSubscription();
-    // A subscription made with other server keys is refused by the push service: replace it.
-    const used = sub && sub.options.applicationServerKey && new Uint8Array(sub.options.applicationServerKey);
-    if (sub && (!used || used.length !== key.length || used.some((b, i) => b !== key[i]))) {
-      await sub.unsubscribe();
-      sub = null;
-    }
-    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
-    return api('/api/push', { method: 'POST', body: { subscription: sub.toJSON(), test } });
-  }, []);
-
   useEffect(() => {
-    if (!supported()) return setPerm('unsupported');
-    setPerm(Notification.permission);
-    if (Notification.permission === 'granted') subscribe().catch(() => {});
-  }, [subscribe]);
+    if (!APP_ID) return setPerm('off');
+    let live = true;
+    oneSignal()
+      .then(async (os) => {
+        if (!os.Notifications.isPushSupported()) return live && setPerm('unsupported');
+        const id = String(user.employeeId || '').toLowerCase();
+        await os.login(id);
+        os.User.addTags({ role: user.role, employee: id });
+        if (os.Notifications.permission) await os.User.PushSubscription.optIn();
+        if (live) setPerm(os.Notifications.permission ? 'granted' : os.Notifications.permissionNative);
+      })
+      .catch(() => live && setPerm('default'));
+    return () => { live = false; };
+  }, [user.employeeId, user.role]);
 
   async function onClick() {
+    if (perm === 'off') return setNote('Alerts are not set up yet: the OneSignal app ID is missing.');
     if (perm === 'unsupported') {
       return setNote(window.isSecureContext
         ? 'This browser does not support alerts. On iPhone, add the app to the Home Screen first.'
         : 'Alerts need a secure (https) address. Open the app on its https link.');
     }
-    if (perm === 'denied') return setNote('Alerts are blocked. Allow notifications for this site in your browser settings.');
+    if (perm === 'denied') return setNote('Alerts are blocked. Allow notifications for this app in your phone settings.');
     try {
-      const p = perm === 'granted' ? perm : await Notification.requestPermission();
-      setPerm(p);
-      if (p !== 'granted') return;
+      const os = await oneSignal();
+      if (!os.Notifications.permission) await os.Notifications.requestPermission();
+      if (!os.Notifications.permission) return setPerm(os.Notifications.permissionNative);
+      setPerm('granted');
+      await os.User.PushSubscription.optIn();
       setNote('Sending a test alert…');
-      const sent = await subscribe(true);
+      const sent = await api('/api/push', { method: 'POST' });
       setNote(sent.ok ? 'Alerts are on. A test alert was sent to this device.' : `Alerts could not be delivered. ${sent.error}`);
     } catch (e) {
       setNote(`Could not turn on alerts: ${e.message}`);

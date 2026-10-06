@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/client';
 import { ROLES, labelOf } from '@/lib/constants';
 import { UserContext } from './UserContext';
-import NotificationBell, { currentEndpoint } from './NotificationBell';
+import NotificationBell, { alertsSignOut } from './NotificationBell';
 import Icon from './Icon';
 
 const NAV = [
@@ -27,8 +27,7 @@ export default function AppShell({ children }) {
 
   async function logout() {
     // this device stops receiving the signed-out user's alerts
-    const endpoint = await currentEndpoint().catch(() => null);
-    if (endpoint) await fetch('/api/push', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint }) }).catch(() => {});
+    await alertsSignOut();
     await fetch('/api/auth/logout', { method: 'POST' });
     window.location.href = '/login';
   }

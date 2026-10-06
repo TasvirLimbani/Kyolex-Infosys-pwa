@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
-  experimental: { serverComponentsExternalPackages: ['web-push'] },
   async headers() {
     return [
       {
