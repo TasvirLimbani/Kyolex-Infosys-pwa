@@ -14,7 +14,7 @@ function oneSignal() {
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       window.OneSignalDeferred.push((OneSignal) =>
         OneSignal.init({
-          appId: APP_ID,
+          appId: '07f7620e-d523-4542-9928-3de7a51aadd6',
           // own folder and scope, so it lives next to the app's /sw.js instead of replacing it
           serviceWorkerPath: 'push/onesignal/OneSignalSDKWorker.js',
           serviceWorkerParam: { scope: '/push/onesignal/' },
