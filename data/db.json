@@ -1,0 +1,100 @@
+{
+  "counters": {
+    "task": 1,
+    "employee": 4,
+    "party": 1,
+    "notification": 2,
+    "invoice": 1
+  },
+  "employees": [
+    {
+      "id": 1,
+      "employeeId": "EMP001",
+      "name": "Admin",
+      "email": "admin@taskflow.com",
+      "password": "bc17169e2560733d417e9f7bf14d54a6:f8ad3ad1a62741f807bf2c81f36edd2b2c85fd1307d37c59e0c83a9f6f5f85e060f66350256a96224e55776305670e95b2ea1ecc5408bf054f90001590065297",
+      "role": "admin",
+      "status": "active",
+      "createdAt": "2026-10-06T06:43:05.420Z"
+    },
+    {
+      "id": 2,
+      "employeeId": "123",
+      "name": "tasvir",
+      "email": "pankilvaghani30@gmail.com",
+      "password": "a8c23ad362d1e485d170f7c61e16567b:22974df8a4b5db9268210822523a3af2615d66a5c58472c316e1b12b058145032dda669efb5ca9a8f8a6fba831f3fe1033825a03c5fa8499a1c2aab346de27b5",
+      "role": "employee",
+      "status": "active",
+      "createdAt": "2026-10-06T06:49:02.990Z"
+    },
+    {
+      "id": 3,
+      "employeeId": "EMP002",
+      "name": "parag",
+      "email": "parag@kyolex.com",
+      "password": "",
+      "role": "employee",
+      "status": "active",
+      "createdAt": "2026-10-06T09:37:39.982Z"
+    },
+    {
+      "id": 4,
+      "employeeId": "EMP001",
+      "name": "Bhargav",
+      "email": "bhargav@kyolex.com",
+      "password": "",
+      "role": "admin",
+      "status": "active",
+      "createdAt": "2026-10-06T09:39:45.090Z"
+    }
+  ],
+  "parties": [
+    {
+      "id": 1,
+      "name": "Pankil",
+      "number": "7096344738",
+      "email": "",
+      "address": "",
+      "createdAt": "2026-10-06T06:48:19.617Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "invoiceNo": "INV-2026-0001",
+      "partyId": 1,
+      "date": "2026-10-06",
+      "dueDate": "2026-10-07",
+      "status": "pending",
+      "amount": 12020,
+      "assigneeId": 2,
+      "priority": "urgent",
+      "notes": "Fast",
+      "completedOn": null,
+      "createdBy": 1,
+      "createdAt": "2026-10-06T06:48:19.617Z",
+      "updatedAt": "2026-10-06T07:00:49.084Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": 1,
+      "userId": 1,
+      "title": "New task assigned to you",
+      "body": "#1 Pankil, ₹12,020, due 2026-10-07",
+      "url": "/tasks?task=1",
+      "read": true,
+      "createdAt": "2026-10-06T06:48:19.638Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "title": "New task assigned to you",
+      "body": "#1 Pankil, ₹12,020, due 2026-10-07",
+      "url": "/tasks?task=1",
+      "read": false,
+      "createdAt": "2026-10-06T06:50:16.450Z"
+    }
+  ],
+  "sessions": []
+}
