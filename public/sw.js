@@ -1,5 +1,5 @@
 const CACHE = 'kyolex-v1';
-const DEV = new URL(self.location.href).searchParams.has('dev'); // dev server: no caching
+const DEV = ['localhost', '127.0.0.1'].includes(self.location.hostname); // dev server: no caching, it would serve stale chunks
 const PRECACHE = ['/offline.html', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -42,4 +42,4 @@ self.addEventListener('fetch', (e) => {
   }
 });
 
-// Push alerts are handled by the OneSignal worker in public/push/onesignal.
+// Loaded by /OneSignalSDKWorker.js, which adds OneSignal's push handling.
