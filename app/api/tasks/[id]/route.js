@@ -29,13 +29,13 @@ export async function PUT(req, { params }) {
   if (!cur.ok) return fail(cur);
   const before = toTask(one(cur.data, 'task'));
 
-  // Employees can only change the status and amount of their own tasks.
+  // Employees can only change the status, amount, and employee note of their own tasks.
   if (!isManager(user)) {
     if (!canSee(user, before)) return forbidden();
     if (!STATUSES.some((s) => s.value === b.status)) return json({ error: 'Pick a status.' }, 400);
     const amount = b.amount === undefined ? before.amount : Number(b.amount);
     if (b.amount === '' || !Number.isFinite(amount) || amount < 0) return json({ error: 'Enter a valid amount.' }, 400);
-    b = { ...before, status: b.status, amount };
+    b = { ...before, status: b.status, amount, employeeNote: b.employeeNote === undefined ? before.employeeNote : b.employeeNote };
   }
 
   const body = { id, ...taskBody(b) };

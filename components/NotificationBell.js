@@ -36,6 +36,17 @@ export async function alertsSignOut() {
   if (sdk) await sdk.then((os) => os.logout()).catch(() => {});
 }
 
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Ties this device to the employee in OneSignal and waits until the device has its push subscription.
+async function register(os, user) {
+  const id = String(user.employeeId || '').toLowerCase();
+  if (os.User.externalId !== id) await os.login(id);
+  os.User.addTags({ role: user.role, employee: id });
+  await os.User.PushSubscription.optIn();
+  for (let i = 0; i < 20 && !os.User.PushSubscription.id; i++) await wait(500);
+}
+
 // Bell in the top bar: turns on phone alerts for this device and ties it to the signed-in employee.
 export default function NotificationBell() {
   const user = useUser();
@@ -48,15 +59,12 @@ export default function NotificationBell() {
     oneSignal()
       .then(async (os) => {
         if (!os.Notifications.isPushSupported()) return live && setPerm('unsupported');
-        const id = String(user.employeeId || '').toLowerCase();
-        await os.login(id);
-        os.User.addTags({ role: user.role, employee: id });
-        if (os.Notifications.permission) await os.User.PushSubscription.optIn();
+        if (os.Notifications.permission) await register(os, user);
         if (live) setPerm(os.Notifications.permission ? 'granted' : os.Notifications.permissionNative);
       })
       .catch(() => live && setPerm('default'));
     return () => { live = false; };
-  }, [user.employeeId, user.role]);
+  }, [user]);
 
   async function onClick() {
     if (perm === 'off') return setNote('Alerts are not set up yet: the OneSignal app ID is missing.');
@@ -71,9 +79,15 @@ export default function NotificationBell() {
       if (!os.Notifications.permission) await os.Notifications.requestPermission();
       if (!os.Notifications.permission) return setPerm(os.Notifications.permissionNative);
       setPerm('granted');
-      await os.User.PushSubscription.optIn();
       setNote('Sending a test alert…');
-      const sent = await api('/api/push', { method: 'POST' });
+      await register(os, user);
+      // OneSignal needs a few seconds to link a new device to the employee: try again while it says "unknown".
+      let sent;
+      for (let i = 0; i < 6; i++) {
+        sent = await api('/api/push', { method: 'POST' });
+        if (sent.ok || !sent.pending) break;
+        await wait(3000);
+      }
       setNote(sent.ok ? 'Alerts are on. A test alert was sent to this device.' : `Alerts could not be delivered. ${sent.error}`);
     } catch (e) {
       setNote(`Could not turn on alerts: ${e.message}`);

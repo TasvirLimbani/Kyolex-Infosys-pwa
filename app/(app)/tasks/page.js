@@ -13,6 +13,7 @@ import { StatusBadge, PriorityBadge } from '@/components/Badges';
 function StatusUpdate({ task, onSaved }) {
   const [status, setStatus] = useState(task.status);
   const [amount, setAmount] = useState(String(task.amount));
+  const [employeeNote, setEmployeeNote] = useState(task.employeeNote || '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -20,7 +21,7 @@ function StatusUpdate({ task, onSaved }) {
     setSaving(true);
     setError('');
     try {
-      const d = await api(`/api/tasks/${task.id}`, { method: 'PUT', body: { status, amount } });
+      const d = await api(`/api/tasks/${task.id}`, { method: 'PUT', body: { status, amount, employeeNote } });
       onSaved(d.task);
     } catch (e) {
       setError(e.message);
@@ -29,7 +30,7 @@ function StatusUpdate({ task, onSaved }) {
     }
   }
 
-  const dirty = status !== task.status || Number(amount) !== task.amount;
+  const dirty = status !== task.status || Number(amount) !== task.amount || employeeNote !== (task.employeeNote || '');
 
   return (
     <div className="task-view">
@@ -54,6 +55,7 @@ function StatusUpdate({ task, onSaved }) {
       </dl>
 
       {task.notes && <p className="tv-notes">{task.notes}</p>}
+      {task.employeeNote && <p className="tv-notes"><strong>Employee note:</strong> {task.employeeNote}</p>}
 
       <div className="tv-edit">
         <label className="field">
@@ -71,6 +73,10 @@ function StatusUpdate({ task, onSaved }) {
             ))}
           </div>
         </div>
+        <label className="field span-2">
+          <span>Employee note (optional)</span>
+          <textarea rows="2" value={employeeNote} onChange={(e) => setEmployeeNote(e.target.value)} />
+        </label>
       </div>
 
       {error && <p className="form-error" role="alert">{error}</p>}

@@ -4,7 +4,7 @@ import { api } from '@/lib/client';
 import { STATUSES, PRIORITIES, todayStr, prettyDate } from '@/lib/constants';
 import Select from './Select';
 
-const EMPTY = { partyName: '', partyNumber: '', dueDate: '', status: 'pending', amount: '', assigneeId: '', priority: 'medium', notes: '' };
+const EMPTY = { partyName: '', partyNumber: '', dueDate: '', status: 'pending', amount: '', assigneeId: '', priority: 'medium', notes: '', employeeNote: '' };
 
 export default function TaskForm({ task, onSaved, onDelete }) {
   const editing = Boolean(task);
@@ -101,6 +101,10 @@ export default function TaskForm({ task, onSaved, onDelete }) {
       <label className="field span-2">
         <span>Notes (optional)</span>
         <textarea rows="2" value={form.notes} onChange={set('notes')} />
+      </label>
+      <label className="field span-2">
+        <span>Employee note (optional)</span>
+        <textarea rows="2" value={form.employeeNote} onChange={set('employeeNote')} />
       </label>
 
       {error && <p className="form-error span-2" role="alert">{error}</p>}
