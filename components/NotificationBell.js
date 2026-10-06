@@ -24,12 +24,19 @@ export default function NotificationBell() {
   const [perm, setPerm] = useState('granted'); // granted | default | denied | unsupported
   const [note, setNote] = useState('');
 
-  const subscribe = useCallback(async () => {
+  const subscribe = useCallback(async (test = false) => {
     const reg = await navigator.serviceWorker.ready;
     const { publicKey } = await api('/api/push');
+    const key = keyBytes(publicKey);
     let sub = await reg.pushManager.getSubscription();
-    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) });
-    await api('/api/push', { method: 'POST', body: { subscription: sub.toJSON() } });
+    // A subscription made with other server keys is refused by the push service: replace it.
+    const used = sub && sub.options.applicationServerKey && new Uint8Array(sub.options.applicationServerKey);
+    if (sub && (!used || used.length !== key.length || used.some((b, i) => b !== key[i]))) {
+      await sub.unsubscribe();
+      sub = null;
+    }
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+    return api('/api/push', { method: 'POST', body: { subscription: sub.toJSON(), test } });
   }, []);
 
   useEffect(() => {
@@ -39,14 +46,19 @@ export default function NotificationBell() {
   }, [subscribe]);
 
   async function onClick() {
-    if (perm === 'unsupported') return setNote('This browser does not support alerts. On iPhone, add the app to the Home Screen first.');
+    if (perm === 'unsupported') {
+      return setNote(window.isSecureContext
+        ? 'This browser does not support alerts. On iPhone, add the app to the Home Screen first.'
+        : 'Alerts need a secure (https) address. Open the app on its https link.');
+    }
     if (perm === 'denied') return setNote('Alerts are blocked. Allow notifications for this site in your browser settings.');
     try {
       const p = perm === 'granted' ? perm : await Notification.requestPermission();
       setPerm(p);
       if (p !== 'granted') return;
-      await subscribe();
-      setNote('Alerts are on for this device.');
+      setNote('Sending a test alert…');
+      const sent = await subscribe(true);
+      setNote(sent.ok ? 'Alerts are on. A test alert was sent to this device.' : `Alerts could not be delivered. ${sent.error}`);
     } catch (e) {
       setNote(`Could not turn on alerts: ${e.message}`);
     }

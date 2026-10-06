@@ -75,6 +75,33 @@
       },
       "employeeId": "EMP001",
       "role": "admin"
+    },
+    {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/eWUKxdcOhmg:APA91bGbpZJW1yYZLql1bxX8Jn1OmY05VrZH4J35bCbJIe2HD9iwFiDNAA9V74bCHC330T5kdlS4GG-W0NRjNDWkQEGSOaHb4ahniiluoWxCggGXECM4azp7AKxG2o4Ct98nwsl1gyaD",
+      "keys": {
+        "p256dh": "BDC-MOHKjJ-gCc1i_smczCbx0IsFXZbyaK6VGO1m3Na2RZBKLF-xu4NsZ05-oeOXO9UqUEyReIbDzTO88UNoUpc",
+        "auth": "OC-Z0c1Wbl45ee3tMf0a6w"
+      },
+      "employeeId": "EMP001",
+      "role": "admin"
+    },
+    {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/cte5_jW27Qc:APA91bFxoz8bn9aj0QaxUnBmfgrDTUQnIJU__xJThAp-Nf1sjzx9MtWeIU_SRsYqpLpXIOwS42F4TtdtXubRCZkuN17CcIzw9r4k8gjDkvuuRLWtXyvRLN1PsUzelnJBd1wesCuhVibM",
+      "keys": {
+        "p256dh": "BH1yVUuxZ3TPWFtGOmEiLscg604wClCTrCh-YUDCHIq-nVtmpRIMv2hqVZ6uDPb9lANRUNdDVXlSgcQNI2MMxn8",
+        "auth": "sX_fRV3L_cE-djXszETPeg"
+      },
+      "employeeId": "EMP001",
+      "role": "admin"
+    },
+    {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/fYrjOfVM9Qs:APA91bHNoE9hOEyz5qFlYndnqkpXQHjKQgY6INkcE4p4hj7Gk7bgktxl5XICUqOuyjKcGPQUFZk8ZTE8WDhx3qmC_Bs85t5-pvldFpmx-rFvQGbrd2d69K6npSmvasikTDjH47Wlkai-",
+      "keys": {
+        "p256dh": "BP2s80aHD8XcwqQsHYt9oDqv931nSyDuB2pTqU0At4uEX_Jn0vVtLq5yKUQ76RaKMn9I9YGfBTn_Vxl-LWrO79o",
+        "auth": "gQsvqjdv1dxDC2ATHqpEqg"
+      },
+      "employeeId": "EMP001",
+      "role": "admin"
     }
   ]
 }

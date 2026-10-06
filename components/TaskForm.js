@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/client';
 import { STATUSES, PRIORITIES, todayStr, prettyDate } from '@/lib/constants';
+import Select from './Select';
 
 const EMPTY = { partyName: '', partyNumber: '', dueDate: '', status: 'pending', amount: '', assigneeId: '', priority: 'medium', notes: '' };
 
@@ -82,28 +83,20 @@ export default function TaskForm({ task, onSaved, onDelete }) {
         <span>Due date</span>
         <input type="date" min={date} value={form.dueDate} onChange={set('dueDate')} required />
       </label>
-      <label className="field">
+      <div className="field">
         <span>Assignee</span>
-        <select value={form.assigneeId} onChange={set('assigneeId')} required>
-          <option value="">Select employee</option>
-          {assigneeOptions.map((e) => (
-            <option key={e.id} value={e.employeeId}>{e.name}{e.employeeId ? ` (${e.employeeId})` : ''}</option>
-          ))}
-        </select>
-      </label>
+        <Select label="Assignee" value={form.assigneeId} onChange={set('assigneeId')} placeholder="Select employee" required
+          options={assigneeOptions.map((e) => ({ value: e.employeeId, label: `${e.name}${e.employeeId ? ` (${e.employeeId})` : ''}` }))} />
+      </div>
 
-      <label className="field">
+      <div className="field">
         <span>Status</span>
-        <select value={form.status} onChange={set('status')}>
-          {STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
-      </label>
-      <label className="field">
+        <Select label="Status" value={form.status} onChange={set('status')} options={STATUSES} />
+      </div>
+      <div className="field">
         <span>Priority</span>
-        <select value={form.priority} onChange={set('priority')}>
-          {PRIORITIES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-        </select>
-      </label>
+        <Select label="Priority" value={form.priority} onChange={set('priority')} options={PRIORITIES} />
+      </div>
 
       <label className="field span-2">
         <span>Notes (optional)</span>

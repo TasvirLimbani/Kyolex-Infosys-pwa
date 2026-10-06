@@ -56,13 +56,13 @@ export default function ReportsPage() {
             <tbody>
               {rows.map((p) => (
                 <tr key={p.id}>
-                  <td><Link href={`/reports/${encodeURIComponent(p.id)}`} className="party-link">{p.name}</Link></td>
-                  <td>{p.number}</td>
-                  <td className="num">{p.totalTasks}</td>
-                  <td className="num">{money(p.totalAmount)}</td>
-                  <td className="num pos">{money(p.collected)}</td>
-                  <td className="num warn">{money(p.outstanding)}</td>
-                  <td>{p.lastDate ? prettyDate(p.lastDate) : '–'}</td>
+                  <td className="cell-title"><Link href={`/reports/${encodeURIComponent(p.id)}`} className="party-link">{p.name}</Link></td>
+                  <td data-label="Phone">{p.number}</td>
+                  <td className="num" data-label="Tasks">{p.totalTasks}</td>
+                  <td className="num" data-label="Billed">{money(p.totalAmount)}</td>
+                  <td className="num pos" data-label="Collected">{money(p.collected)}</td>
+                  <td className="num warn" data-label="Outstanding">{money(p.outstanding)}</td>
+                  <td data-label="Last task">{p.lastDate ? prettyDate(p.lastDate) : '–'}</td>
                   <td className="row-actions">
                     <Link className="icon-btn" href={`/reports/${encodeURIComponent(p.id)}`} aria-label={`Open ${p.name}`}><Icon name="eye" size={18} /></Link>
                   </td>

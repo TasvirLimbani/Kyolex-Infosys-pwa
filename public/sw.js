@@ -61,7 +61,12 @@ self.addEventListener('notificationclick', (e) => {
 
 // Web Push from the server (lib/push.js): task assigned, task updated
 self.addEventListener('push', (e) => {
-  const d = e.data ? e.data.json() : {};
+  let d = {};
+  try {
+    d = e.data ? e.data.json() : {};
+  } catch {
+    d = { body: e.data.text() };
+  }
   e.waitUntil(
     self.registration.showNotification(d.title || 'Kyolex Infosys', {
       body: d.body || '',

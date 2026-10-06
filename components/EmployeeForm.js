@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { api } from '@/lib/client';
 import { ROLES, EMP_STATUSES } from '@/lib/constants';
+import Select from './Select';
 
 export default function EmployeeForm({ employee, onSaved }) {
   const editing = Boolean(employee);
@@ -56,18 +57,14 @@ export default function EmployeeForm({ employee, onSaved }) {
           <button type="button" className="link-btn" onClick={() => setShow((s) => !s)}>{show ? 'Hide' : 'Show'}</button>
         </div>
       </label>
-      <label className="field">
+      <div className="field">
         <span>Role</span>
-        <select value={form.role} onChange={set('role')}>
-          {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-        </select>
-      </label>
-      <label className="field">
+        <Select label="Role" value={form.role} onChange={set('role')} options={ROLES} />
+      </div>
+      <div className="field">
         <span>Status</span>
-        <select value={form.status} onChange={set('status')}>
-          {EMP_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
-      </label>
+        <Select label="Status" value={form.status} onChange={set('status')} options={EMP_STATUSES} />
+      </div>
 
       {error && <p className="form-error span-2" role="alert">{error}</p>}
       <div className="form-actions span-2">

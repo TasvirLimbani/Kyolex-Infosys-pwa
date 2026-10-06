@@ -42,19 +42,19 @@ export default function EmployeesPage() {
         <div className="loading">Loading employees…</div>
       ) : (
         <div className="table-wrap">
-          <table className="table">
+          <table className="table table-emp">
             <thead>
               <tr><th>Employee ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th className="num">Tasks</th><th aria-label="Actions" /></tr>
             </thead>
             <tbody>
               {list.map((e) => (
                 <tr key={e.id}>
-                  <td className="mono-id">{e.employeeId}</td>
-                  <td><strong>{e.name}</strong>{e.id === user.id && <span className="you"> (you)</span>}</td>
-                  <td>{e.email}</td>
-                  <td>{labelOf(ROLES, e.role)}</td>
-                  <td><EmpStatusBadge status={e.status} /></td>
-                  <td className="num">{e.taskCount}</td>
+                  <td className="mono-id" data-label="Employee ID">{e.employeeId}</td>
+                  <td className="cell-title"><strong>{e.name}</strong>{e.id === user.id && <span className="you"> (you)</span>}</td>
+                  <td className="cell-wide" data-label="Email">{e.email}</td>
+                  <td data-label="Role">{labelOf(ROLES, e.role)}</td>
+                  <td data-label="Status"><EmpStatusBadge status={e.status} /></td>
+                  <td className="num" data-label="Tasks">{e.taskCount}</td>
                   <td className="row-actions">
                     <button className="icon-btn" onClick={() => setModal({ employee: e })} aria-label={`Edit ${e.name}`}><Icon name="edit" size={18} /></button>
                     {e.id !== user.id && (
