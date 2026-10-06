@@ -59,15 +59,6 @@
       "role": "employee"
     },
     {
-      "endpoint": "https://fcm.googleapis.com/fcm/send/ct5poqL7i5c:APA91bFpdasm478hGeR6GVHYZHG2CziFWqoT4-sY78atAZg21HooirYEkGePh4ZMfoqaJXvh0CywbiIypG4Jx5I5YdnYJkQYhlmAirUMjOEo_7AvU4DkJAGEcDjdI2EmrgGZO2Lz-TGx",
-      "keys": {
-        "p256dh": "BKXXD3mzn2kaX4CcpSgPQvjGiw2M3Rv2KVDEhH9DutpF7YP0viOSWnwScsQ9Iqr8-UFKBYdHzTUfYnx3hYdcIoU",
-        "auth": "kuSBm00aC9Udybfr82nDuw"
-      },
-      "employeeId": "EMP001",
-      "role": "admin"
-    },
-    {
       "endpoint": "https://fcm.googleapis.com/fcm/send/ccVJYPr5voU:APA91bEK8JSkJ-hpc623G8ryQrLSdIoGX7j-G_FEitHCXrZpQNXMIVep9ZioLgpUOiN4loZ0anSqazVqffyf2lh7UpFsY72JD6fojKPVvR-gtAlK7NYzhe8b0EkKQ8sSzKUR3h7k5lMr",
       "keys": {
         "p256dh": "BGuF_BBt5c5R7S2w5HeVT5Tzi6IZYWMm6CFIrV8d9NSrF9qxRVWc8GdEYuYFuRmFpPkLSF6MDxnsO5SevAHzkhE",
@@ -75,6 +66,15 @@
       },
       "employeeId": "EMP002",
       "role": "employee"
+    },
+    {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/ct5poqL7i5c:APA91bFpdasm478hGeR6GVHYZHG2CziFWqoT4-sY78atAZg21HooirYEkGePh4ZMfoqaJXvh0CywbiIypG4Jx5I5YdnYJkQYhlmAirUMjOEo_7AvU4DkJAGEcDjdI2EmrgGZO2Lz-TGx",
+      "keys": {
+        "p256dh": "BKXXD3mzn2kaX4CcpSgPQvjGiw2M3Rv2KVDEhH9DutpF7YP0viOSWnwScsQ9Iqr8-UFKBYdHzTUfYnx3hYdcIoU",
+        "auth": "kuSBm00aC9Udybfr82nDuw"
+      },
+      "employeeId": "EMP001",
+      "role": "admin"
     }
   ]
 }
