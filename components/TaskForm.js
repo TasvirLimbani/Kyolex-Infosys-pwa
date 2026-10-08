@@ -8,7 +8,7 @@ const EMPTY = { partyName: '', partyNumber: '', dueDate: '', status: 'pending', 
 
 export default function TaskForm({ task, onSaved, onDelete }) {
   const editing = Boolean(task);
-  const [form, setForm] = useState(editing ? { ...EMPTY, ...task, amount: String(task.amount) } : EMPTY);
+  const [form, setForm] = useState(editing ? { ...EMPTY, ...task, amount: String('0') } : EMPTY);
   const invoiceNo = task?.invoiceNo || 'Assigned on save';
   const [employees, setEmployees] = useState([]);
   const [parties, setParties] = useState([]);
@@ -74,10 +74,10 @@ export default function TaskForm({ task, onSaved, onDelete }) {
         <span>Phone number</span>
         <input type="tel" inputMode="tel" value={form.partyNumber} onChange={set('partyNumber')} placeholder="98765 43210" required />
       </label>
-      <label className="field">
+      {/* <label className="field">
         <span>Amount (₹)</span>
         <input type="number" inputMode="decimal" min="0" step="0.01" value={form.amount} onChange={set('amount')} required />
-      </label>
+      </label> */}
 
       <label className="field">
         <span>Due date</span>

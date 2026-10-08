@@ -58,10 +58,7 @@ function StatusUpdate({ task, onSaved }) {
       {task.employeeNote && <p className="tv-notes"><strong>Employee note:</strong> {task.employeeNote}</p>}
 
       <div className="tv-edit">
-        <label className="field">
-          <span>Amount (₹)</span>
-          <input type="number" inputMode="decimal" min="0" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} required />
-        </label>
+      
         <div className="field">
           <span>Status</span>
           <div className="status-picker" role="radiogroup" aria-label="Update status">
