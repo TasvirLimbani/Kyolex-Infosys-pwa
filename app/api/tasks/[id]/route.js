@@ -8,13 +8,25 @@ export const dynamic = 'force-dynamic';
 
 const same = (a, b) => String(a || '').toLowerCase() === String(b || '').toLowerCase();
 
+// task/get.php leaves the employee note out, but task/edit.php returns it in its reply.
+// Until get.php sends it, re-save the task unchanged, without the note field, and read the note from that reply.
+async function employeeNoteOf(raw) {
+  if (Object.keys(raw).some((k) => /^employee_?note$/i.test(k))) return toTask(raw).employeeNote;
+  const task = toTask(raw);
+  const { employee_note, ...body } = taskBody(task);
+  const r = await call('PUT', 'task/edit.php', { body: { id: task.id, ...body } });
+  return r.ok ? toTask(one(r.data, 'task')).employeeNote : '';
+}
+
 export async function GET(_req, { params }) {
   const user = getCurrentUser();
   if (!user) return unauthorized();
   const r = await call('GET', 'task/get.php', { query: { id: params.id } });
   if (!r.ok) return fail(r);
-  const task = toTask(one(r.data, 'task'));
+  const raw = one(r.data, 'task');
+  const task = toTask(raw);
   if (!canSee(user, task)) return forbidden();
+  task.employeeNote = await employeeNoteOf(raw);
   return json({ task: (await withNames(user, [task]))[0] });
 }
 

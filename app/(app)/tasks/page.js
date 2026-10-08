@@ -128,6 +128,16 @@ function TasksInner() {
       .catch((e) => setError(e.message));
   }, [openId]);
 
+  // The month list can leave fields out (e.g. the employee note), so open a row with the full task.
+  async function openTask(t) {
+    try {
+      const d = await api(`/api/tasks/${t.id}`);
+      setModal({ mode: 'edit', task: d.task });
+    } catch {
+      setModal({ mode: 'edit', task: t });
+    }
+  }
+
   function closeModal() {
     setModal(null);
     if (openId) router.replace('/tasks');
@@ -214,7 +224,7 @@ function TasksInner() {
               </span>
             </div>
             <div className="task-list">
-              {list.map((t) => <TaskRow key={t.id} task={t} onClick={() => setModal({ mode: 'edit', task: t })} />)}
+              {list.map((t) => <TaskRow key={t.id} task={t} onClick={() => openTask(t)} />)}
             </div>
           </section>
         ))
