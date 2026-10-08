@@ -19,7 +19,7 @@ export async function GET(req) {
   if (!r.ok) return fail(r);
   const d = payload(r.data);
   const s = pick(d, 'stats', 'summary', 'cards', 'counts') || d;
-  const m = pick(d, 'monthly', 'monthlysummary', 'monthsummary') || {};
+  const m = pick(d, 'tasksummarymonthly', 'monthly', 'monthlysummary', 'monthsummary') || {};
   const recent = visibleTo(user, list(pick(d, 'recent', 'todaytasks', 'todaystasks', 'today', 'recenttasks', 'tasks')).map(toTask));
 
   return json({
@@ -36,11 +36,11 @@ export async function GET(req) {
     })),
     monthly: {
       month: String(pick(m, 'month') || month).slice(0, 7),
-      total: num(pick(m, 'total', 'totaltasks')),
-      completed: num(pick(m, 'completed')),
-      in_progress: num(pick(m, 'inprogress')),
-      pending: num(pick(m, 'pending')),
-      cancelled: num(pick(m, 'cancelled', 'canceled')),
+      total: num(pick(m, 'totaltask', 'total', 'totaltasks')),
+      completed: num(pick(m, 'completedtask', 'completed')),
+      in_progress: num(pick(m, 'inprogresstask', 'inprogress')),
+      pending: num(pick(m, 'pendingtask', 'pending')),
+      cancelled: num(pick(m, 'cancelledtask', 'cancelled', 'canceled')),
     },
     recent: await withNames(user, recent),
   });
